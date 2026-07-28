@@ -6,3 +6,6 @@ __pycache__/
 
 # Claude Code local settings (do not publish)
 .claude/
+
+# webapp 构建产物（由 app/build/build.py 从 data/exercises.json 生成）
+app/public/data/

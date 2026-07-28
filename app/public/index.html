@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0d0f12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>囚徒健身 · 徒手训练手册</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- ══════════════════════════ 顶栏 ══════════════════════════ -->
+  <header id="topbar">
+    <div class="tb-main">
+      <button id="backBtn" class="icon-btn hidden" aria-label="返回">‹</button>
+      <div class="tb-title">
+        <h1 id="tbTitle">囚徒健身</h1>
+        <p id="tbSub">徒手 · 挂墙单杠训练手册</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════ 六艺体系 ══════════════════════════ -->
+  <section id="view-system" class="view">
+    <div class="hero">
+      <div class="hero-badge">Convict Conditioning</div>
+      <h2>六艺进阶体系</h2>
+      <p>六条主链，从零基础到大师级。每条链按难度排成阶梯，逐级攻克，不跳步。</p>
+    </div>
+    <div id="famGrid" class="fam-grid"></div>
+
+    <div class="section-label">辅助与恢复</div>
+    <div id="famGridAux" class="fam-grid aux"></div>
+
+    <div class="tip-card">
+      <div class="tip-icon">⚠️</div>
+      <div>
+        <strong>挂墙单杠安全提示</strong>
+        <p>使用前确认膨胀螺栓打入实心承重墙、静态承重 ≥150kg，并每月检查一次紧固。空心砖 / 石膏板墙禁止安装。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ 动作库 ══════════════════════════ -->
+  <section id="view-library" class="view hidden">
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="搜索动作，如「引体」「深蹲」" autocomplete="off">
+    </div>
+
+    <div class="filter-block">
+      <div class="filter-row" id="filterParts"></div>
+      <div class="filter-row" id="filterDiff"></div>
+      <div class="filter-row" id="filterFam"></div>
+    </div>
+
+    <div class="result-bar">
+      <span id="resultCount"></span>
+      <button id="clearFilters" class="link-btn hidden">清除筛选</button>
+    </div>
+
+    <div id="exList" class="ex-list"></div>
+    <div id="emptyState" class="empty hidden">
+      <div class="empty-icon">🔍</div>
+      <p>没有符合条件的动作</p>
+      <button class="btn-ghost" onclick="App.clearFilters()">清除筛选条件</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ 今日训练 ══════════════════════════ -->
+  <section id="view-plan" class="view hidden">
+    <div class="hero compact">
+      <h2>今日训练</h2>
+      <p>选择你的水平和今天想练的方向，教练为你排一节课。</p>
+    </div>
+
+    <div class="plan-form">
+      <div class="pf-group">
+        <label>我的水平</label>
+        <div class="seg" id="planLevel"></div>
+      </div>
+      <div class="pf-group">
+        <label>训练重点</label>
+        <div class="seg" id="planFocus"></div>
+      </div>
+      <div class="pf-group">
+        <label>可用器械</label>
+        <div class="seg" id="planGear"></div>
+      </div>
+      <button id="genPlan" class="btn-primary">生成训练计划</button>
+    </div>
+
+    <div id="planResult"></div>
+  </section>
+
+  <!-- ══════════════════════════ 进阶链 ══════════════════════════ -->
+  <section id="view-chain" class="view hidden">
+    <div id="chainHead"></div>
+    <div id="chainList" class="chain-list"></div>
+  </section>
+
+  <!-- ══════════════════════════ 动作详情 ══════════════════════════ -->
+  <section id="view-detail" class="view hidden">
+    <div id="detailBody"></div>
+  </section>
+
+  <!-- ══════════════════════════ 底部导航 ══════════════════════════ -->
+  <nav id="tabbar">
+    <button data-tab="system" class="tab active"><span>🏛️</span>六艺</button>
+    <button data-tab="library" class="tab"><span>📚</span>动作库</button>
+    <button data-tab="plan" class="tab"><span>🔥</span>今日训练</button>
+  </nav>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
