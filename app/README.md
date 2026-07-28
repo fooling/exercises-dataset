@@ -20,6 +20,24 @@ python3 app/server.py --host 0.0.0.0 --port 9876
 
 iOS Safari / Android Chrome 可「添加到主屏幕」当作 App 用。
 
+## 常驻运行（systemd user service）
+
+```bash
+./app/ctl.sh install      # 安装 + 启动 + 设为开机自启
+./app/ctl.sh status       # 查看状态和访问地址
+./app/ctl.sh restart      # 改完代码后重启（会自动重跑 build.py）
+./app/ctl.sh stop
+./app/ctl.sh logs         # 跟踪日志（journalctl -f）
+./app/ctl.sh uninstall    # 停止并移除服务，不动仓库文件
+```
+
+`install` 会用实际路径填充 `app/systemd/calisthenics.service.in` 模板，写到
+`~/.config/systemd/user/`，并尝试开启 linger 让服务在注销后继续运行。
+换端口： `PORT=9999 ./app/ctl.sh install`。
+
+服务进程崩溃会在 3 秒后自动重启；每次启动前都会重跑 `build.py`，
+所以改完 `catalog.py` 只需 `./app/ctl.sh restart`。
+
 ## 它做了什么
 
 从 1324 个动作里筛出 **174 个**可徒手或挂墙单杠完成的动作，归入《Convict Conditioning》六艺体系：

@@ -1,0 +1,22 @@
+[Unit]
+Description=囚徒健身 · 徒手训练手册 webapp
+Documentation=file://@REPO@/app/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@REPO@
+# 每次启动前重新构建，保证 catalog.py 的改动自动生效
+ExecStartPre=@PYTHON@ @REPO@/app/build/build.py
+ExecStart=@PYTHON@ @REPO@/app/server.py --host @HOST@ --port @PORT@
+Restart=on-failure
+RestartSec=3
+
+# 轻量加固：系统目录只读，独立 /tmp，禁止提权
+ProtectSystem=full
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

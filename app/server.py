@@ -10,7 +10,7 @@
 import argparse
 import os
 import posixpath
-import socket
+import subprocess
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import unquote, urlparse
 
@@ -45,15 +45,33 @@ class Handler(SimpleHTTPRequestHandler):
             super().log_message(fmt, *args)
 
 
-def lan_ip():
+SKIP_IF = ("docker", "br-", "veth", "tun", "tap", "virbr", "lo")
+
+
+def lan_ips():
+    """列出可用于局域网访问的 IPv4 地址，192.168.* 优先。
+
+    不用「连一下 8.8.8.8 看源地址」那套：这台机器上有 VPN 时，
+    默认路由会走 tun 口，探测到的地址在局域网里根本连不上。
+    """
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except OSError:
-        return "127.0.0.1"
+        out = subprocess.run(["ip", "-4", "-o", "addr", "show", "scope", "global"],
+                             capture_output=True, text=True, timeout=3).stdout
+    except (OSError, subprocess.SubprocessError):
+        return [("127.0.0.1", "lo")]
+
+    found = []
+    for line in out.splitlines():
+        f = line.split()
+        if len(f) < 4:
+            continue
+        iface, ip = f[1], f[3].split("/")[0]
+        if iface.startswith(SKIP_IF):
+            continue
+        rank = 0 if ip.startswith("192.168.") else 1 if ip.startswith("10.") else 2
+        found.append((rank, ip, iface))
+    found.sort()
+    return [(ip, iface) for _, ip, iface in found] or [("127.0.0.1", "lo")]
 
 
 def main():
@@ -67,9 +85,10 @@ def main():
         raise SystemExit("缺少 app/public/data/app-data.json，请先运行： python3 app/build/build.py")
 
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
-    print(f"💪 囚徒健身 webapp 已启动")
+    print("💪 囚徒健身 webapp 已启动")
     print(f"   本机   http://127.0.0.1:{a.port}")
-    print(f"   手机   http://{lan_ip()}:{a.port}")
+    for i, (ip, iface) in enumerate(lan_ips()):
+        print(f"   {'手机' if i == 0 else '    '}   http://{ip}:{a.port}  ({iface})")
     print("   Ctrl+C 停止")
     try:
         srv.serve_forever()
